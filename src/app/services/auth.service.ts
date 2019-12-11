@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { Storage} from '@ionic/storage';
+import { Router } from '@angular/router';
 
 const TOKEN_KEY = 'user-access-token';
 
@@ -11,7 +12,7 @@ export class AuthService {
   user: Observable<any>;
   private authState = new BehaviorSubject(null);
 
-  constructor(private storage: Storage) {
+  constructor(private storage: Storage, private router: Router) {
      this.user = this.authState.asObservable();
    }
 
@@ -34,6 +35,10 @@ export class AuthService {
 
   }
 
-  singOut()
-  {}
+  async singOut() {
+    await this.storage.set(TOKEN_KEY, null);
+    this.authState.next(null);
+    this.router.navigateByUrl('/login');
+
+  }
 }

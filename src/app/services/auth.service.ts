@@ -23,17 +23,17 @@ export class AuthService {
     if (email === 'admin' && pw === 'admin') {
       user = { email, role: 'ADMIN'};
     }
-    else if ( email === 'user' && pw === 'user')
-    {
+    else if ( email === 'user' && pw === 'user'){
       user = { email, role: 'USER'};
     }
-
     this.authState.next(user);
-
     // storage
     this.storage.set(TOKEN_KEY, user);
 
     return of(user);
 
   }
+
+  singOut()
+  {}
 }

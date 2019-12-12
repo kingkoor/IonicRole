@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { Storage} from '@ionic/storage';
 import { Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 const TOKEN_KEY = 'user-access-token';
 
@@ -13,7 +14,20 @@ export class AuthService {
   private authState = new BehaviorSubject(null);
 
   constructor(private storage: Storage, private router: Router) {
-     this.user = this.authState.asObservable();
+    this.loadUser();
+    // changing the code so the obserable with not return null
+     this.user = this.authState.asObservable().pipe(filter(response => response));
+   }
+   loadUser() {
+     this.storage.get(TOKEN_KEY).then( data=> {
+       console.log ('Loaded user[ Service ]: ', data);
+      //  if (data && data.email && data.role){
+        if (data) {
+         this.authState.next(data);
+       } else { 
+         this.authState.next({email: null, role: null});
+       }
+     });
    }
 
   singIn(credentials): Observable<any> {
